@@ -96,7 +96,9 @@ def mlp_categorical_policy(x, a, hidden_sizes, activation, output_activation, ac
 
 def mlp_gaussian_policy(x, a, hidden_sizes, activation, output_activation, action_space):
     act_dim = a.shape.as_list()[-1]
+    print(x.shape)
     mu = mlp(x, list(hidden_sizes)+[act_dim], activation, output_activation)
+    print(mu.shape)
     log_std = tf.get_variable(name='log_std', initializer=-0.5*np.ones(act_dim, dtype=np.float32))
     std = tf.exp(log_std)
     pi = mu + tf.random_normal(tf.shape(mu)) * std
@@ -163,6 +165,7 @@ Actor-Critics
 def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
                      output_activation=None, policy=None, action_space=None):
 
+    x = tf.reshape(x, [-1, x.shape[1]*x.shape[2]])
     # default policy builder depends on action space
     if policy is None and isinstance(action_space, Box):
         policy = mlp_gaussian_policy

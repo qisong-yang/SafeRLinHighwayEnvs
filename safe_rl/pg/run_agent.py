@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 import gym
+from gym.spaces import Box, Discrete
 import time
 import safe_rl.pg.trust_region as tro
 from safe_rl.pg.agents import PPOAgent, TRPOAgent, CPOAgent
@@ -362,9 +363,15 @@ def run_polopt_agent(env_fn,
             vc_t = get_action_outs.get('vc', 0)  # Agent may not use cost value func
             logp_t = get_action_outs['logp_pi']
             pi_info_t = get_action_outs['pi_info']
+            
+            
 
             # Step in environment
-            o2, r, d, info = env.step(a)
+            if isinstance(env.action_space, Discrete):
+                o2, r, d, info = env.step(a[0])
+            else:
+                o2, r, d, info = env.step(a)
+                    
 
             # Include penalty on cost
             c = info.get('cost', 0)
