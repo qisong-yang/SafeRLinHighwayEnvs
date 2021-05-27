@@ -374,8 +374,12 @@ def run_polopt_agent(env_fn,
                     
 
             # Include penalty on cost
-            c = info.get('cost', 0)
-
+            #c = info.get('cost', 0)
+            c = 0
+            if r < 0. and agent.learn_penalty:
+                r = 0.
+                c = 1.
+            #print("r: {}, c: {}".format(r, c))
             # Track cumulative cost over training
             cum_cost += c
 
