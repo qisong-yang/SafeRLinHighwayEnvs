@@ -4,7 +4,7 @@ from safe_rl.pg.run_agent import run_polopt_agent
 
 def ppo(**kwargs):
     ppo_kwargs = dict(
-                    reward_penalized=False,
+                    reward_penalized=True,
                     objective_penalized=False,
                     learn_penalty=False,
                     penalty_param_loss=False  # Irrelevant in unconstrained
