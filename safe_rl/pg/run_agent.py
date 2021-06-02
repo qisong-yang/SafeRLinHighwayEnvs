@@ -374,11 +374,8 @@ def run_polopt_agent(env_fn,
                     
 
             # Include penalty on cost
-            #c = info.get('cost', 0)
-            c = 0
-            if r < 0. and agent.learn_penalty:
-                r = 0.
-                c = 1.
+            c = info.get('cost', 0)
+
             #print("r: {}, c: {}".format(r, c))
             # Track cumulative cost over training
             cum_cost += c
@@ -387,6 +384,7 @@ def run_polopt_agent(env_fn,
             if agent.reward_penalized:
                 r_total = r - cur_penalty * c
                 r_total = r_total / (1 + cur_penalty)
+                #print("Reward going to save: {}".format(r_total))
                 buf.store(o, a, r_total, v_t, 0, 0, logp_t, pi_info_t)
             else:
                 buf.store(o, a, r, v_t, c, vc_t, logp_t, pi_info_t)
