@@ -6,8 +6,8 @@ import argparse
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--seed', nargs='*', default=123)
-    parser.add_argument('--cost_lim', nargs='*', type=list, default=0.001)
+    parser.add_argument('--seed', nargs='*', type=int, default=123)
+    parser.add_argument('--cost_lim', nargs='*', type=float, default=0.001)
     args = parser.parse_args()
 
     seeds = args.seed if isinstance(args.seed, list) else [args.seed]
@@ -19,7 +19,7 @@ if __name__ == '__main__':
             logger_kwargs = {"output_dir": f"./results/ppo_lag_cost_lim_{cost_lim}_seed_{seed}"},
             render=False,
             max_ep_len=70,
-            epochs=600,
+            epochs=150,
             steps_per_epoch=5000,
             penalty_iters=40,
             cost_lim=cost_lim,
