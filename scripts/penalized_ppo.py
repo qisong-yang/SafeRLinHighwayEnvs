@@ -12,5 +12,8 @@ ppo_lagrangian(
     max_ep_len=70,
     epochs=150,
     steps_per_epoch=5000,
-    penalty_iters=80,
+    penalty_iters=40,
+    cost_lim=0.001,
+    penalty_init=10,
+    penalty_lr=0.05,
 )
