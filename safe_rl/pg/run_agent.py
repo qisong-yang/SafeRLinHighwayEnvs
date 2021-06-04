@@ -39,6 +39,7 @@ def run_polopt_agent(env_fn,
                      cost_lim=25,
                      penalty_init=1.,
                      penalty_lr=5e-2,
+                     penalty_iters=1,
                      # KL divergence:
                      target_kl=0.01, 
                      # Value learning:
@@ -305,7 +306,8 @@ def run_polopt_agent(env_fn,
         #  Update penalty if learning penalty                                 #
         #=====================================================================#
         if agent.learn_penalty:
-            sess.run(train_penalty, feed_dict={cur_cost_ph: cur_cost})
+            for _ in range(penalty_iters):
+                sess.run(train_penalty, feed_dict={cur_cost_ph: cur_cost})
 
         #=====================================================================#
         #  Update policy                                                      #
