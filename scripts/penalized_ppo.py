@@ -22,7 +22,7 @@ if __name__ == '__main__':
             ac_kwargs = dict(hidden_sizes=(64,64)),
             logger_kwargs = {"output_dir": f"./results/ppo_lag_{args.env_name}_cost_lim_{args.cost_lim}_penalty_init_{args.penalty_init}_penalty_lr_{args.penalty_lr}_penalty_iters_{args.penalty_iters}_seed_{args.seed}"},
             render=False,
-            max_ep_len=70,
+            max_ep_len=100,
             epochs=150,
             steps_per_epoch=5000,
             cost_lim=args.cost_lim,
