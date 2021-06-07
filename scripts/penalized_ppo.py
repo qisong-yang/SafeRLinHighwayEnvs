@@ -7,28 +7,30 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', nargs='*', type=int, default=123)
-    parser.add_argument('--cost_lim', nargs='*', type=float, default=0.001)
+    parser.add_argument('--cost_lim', type=float, default=0.01)
+    parser.add_argument('--penalty_init', type=float, default=10)
+    parser.add_argument('--penalty_lr', type=float, default=0.05)
+    parser.add_argument('--penalty_iters', type=int, default=40)
+
     args = parser.parse_args()
 
     seeds = args.seed if isinstance(args.seed, list) else [args.seed]
-    cost_lims = args.cost_lim if isinstance(args.cost_lim, list) else [args.cost_lim]
     exps = [
         dict(
             env_fn = lambda : gym.make("merge-v0"),
             ac_kwargs = dict(hidden_sizes=(64,64)),
-            logger_kwargs = {"output_dir": f"./results/ppo_lag_cost_lim_{cost_lim}_seed_{seed}"},
+            logger_kwargs = {"output_dir": f"./results/ppo_lag_cost_lim_{args.cost_lim}_penalty_init_{args.penalty_init}_penalty_lr_{args.penalty_lr}_penalty_iters_{args.penalty_iters}_seed_{args.seed}"},
             render=False,
             max_ep_len=70,
-            epochs=150,
+            epochs=200,
             steps_per_epoch=5000,
-            penalty_iters=40,
-            cost_lim=cost_lim,
-            penalty_init=10,
-            penalty_lr=0.05,
+            cost_lim=args.cost_lim,
+            penalty_init=args.penalty_init,
+            penalty_lr=args.penalty_lr,
+            penalty_iters=args.penalty_iters,
             seed=seed,
         )
         for seed in seeds
-        for cost_lim in cost_lims
     ]
     for exp_kwargs in exps:
         ppo_lagrangian(**exp_kwargs)
