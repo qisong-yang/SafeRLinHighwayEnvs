@@ -7,6 +7,7 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', nargs='*', type=int, default=123)
+    parser.add_argument('--env_name', nargs='*', type=str, default="mergefast-v0")
     parser.add_argument('--cost_lim', type=float, default=0.01)
     parser.add_argument('--penalty_init', type=float, default=10)
     parser.add_argument('--penalty_lr', type=float, default=0.05)
@@ -17,12 +18,12 @@ if __name__ == '__main__':
     seeds = args.seed if isinstance(args.seed, list) else [args.seed]
     exps = [
         dict(
-            env_fn = lambda : gym.make("merge-v0"),
+            env_fn = lambda : gym.make(args.env_name),
             ac_kwargs = dict(hidden_sizes=(64,64)),
-            logger_kwargs = {"output_dir": f"./results/ppo_lag_cost_lim_{args.cost_lim}_penalty_init_{args.penalty_init}_penalty_lr_{args.penalty_lr}_penalty_iters_{args.penalty_iters}_seed_{args.seed}"},
+            logger_kwargs = {"output_dir": f"./results/ppo_lag_{args.env_name}_cost_lim_{args.cost_lim}_penalty_init_{args.penalty_init}_penalty_lr_{args.penalty_lr}_penalty_iters_{args.penalty_iters}_seed_{args.seed}"},
             render=False,
             max_ep_len=70,
-            epochs=200,
+            epochs=150,
             steps_per_epoch=5000,
             cost_lim=args.cost_lim,
             penalty_init=args.penalty_init,
