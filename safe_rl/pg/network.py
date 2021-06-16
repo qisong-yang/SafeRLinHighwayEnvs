@@ -158,14 +158,58 @@ def mlp_squashed_gaussian_policy(x, a, hidden_sizes, activation, output_activati
     return pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent
 
 
+def create_mlp(layers, units, name=None):
+    mlp_layers = []
+    for _ in range(layers):
+        mlp_layers.append(tf.keras.layers.Dense(units, kernel_initializer='orthogonal'))
+        mlp_layers.append(tf.keras.layers.ReLU())
+    if name:
+        return tf.keras.Sequential(mlp_layers, name=name)
+    return tf.keras.Sequential(mlp_layers)
 
 """
 Actor-Critics
 """
 def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
                      output_activation=None, policy=None, action_space=None):
+    print("x shape")
+    print(x.shape)
+    ego_input = x[..., 0,:]
+    others_input = x[..., 1:,:]
 
-    x = tf.reshape(x, [-1, x.shape[1]*x.shape[2]])
+    ego_process_deepset = create_mlp(1,32)
+    ego_process_out = create_mlp(1,32)
+    cars_process = create_mlp(1,32)
+    cars_ego_process = create_mlp(1,64)
+
+
+
+    ego_processed_deepset = ego_process_deepset(ego_input)
+    ego_processed_out = ego_process_out(ego_input)
+    cars_processed = [cars_process(others_input[..., i,:]) for i in range(others_input.get_shape().as_list()[1])]
+
+    print("cars_processed shape")
+    print(cars_processed[0].get_shape())
+    print("ego_processed_deepset shape")
+    print(ego_processed_deepset.get_shape())
+
+    cars_ego_processed = [cars_ego_process(tf.keras.layers.Concatenate(axis=-1)([ego_processed_deepset, cars_processed[i]])) for i in range(others_input.get_shape().as_list()[1])]
+
+
+    print("cars_ego_processed shape")
+    print(cars_ego_processed[0].get_shape())
+
+    cars_ego_processed_summed = tf.keras.layers.Add()(cars_ego_processed)
+
+
+    print("cars_ego_processed_summed shape")
+    print(cars_ego_processed_summed.get_shape())
+
+    final_features = tf.keras.layers.Concatenate(axis=-1)([ego_processed_out, cars_ego_processed_summed])
+    print("final_features shape")
+    print(final_features.get_shape())
+    #x = tf.reshape(x, [-1, x.shape[1]*x.shape[2]])
+
     # default policy builder depends on action space
     if policy is None and isinstance(action_space, Box):
         policy = mlp_gaussian_policy
@@ -173,13 +217,13 @@ def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
         policy = mlp_categorical_policy
 
     with tf.variable_scope('pi'):
-        policy_outs = policy(x, a, hidden_sizes, activation, output_activation, action_space)
+        policy_outs = policy(final_features, a, hidden_sizes, activation, output_activation, action_space)
         pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent = policy_outs
 
     with tf.variable_scope('vf'):
-        v = tf.squeeze(mlp(x, list(hidden_sizes)+[1], activation, None), axis=1)
+        v = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, None), axis=1)
 
     with tf.variable_scope('vc'):
-        vc = tf.squeeze(mlp(x, list(hidden_sizes)+[1], activation, None), axis=1)
+        vc = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, None), axis=1)
 
     return pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent, v, vc
