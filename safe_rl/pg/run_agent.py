@@ -43,8 +43,8 @@ def run_polopt_agent(env_fn,
                      # KL divergence:
                      target_kl=0.01, 
                      # Value learning:
-                     vf_lr=1e-3,
-                     vf_iters=80, 
+                     vf_lr=3e-5,
+                     vf_iters=160,
                      # Logging:
                      logger=None, 
                      logger_kwargs=dict(), 

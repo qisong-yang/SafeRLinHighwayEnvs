@@ -7,7 +7,9 @@ def ppo(**kwargs):
                     reward_penalized=True,
                     objective_penalized=False,
                     learn_penalty=False,
-                    penalty_param_loss=False  # Irrelevant in unconstrained
+                    penalty_param_loss=False,  # Irrelevant in unconstrained
+                    pi_lr=1e-5,
+                    pi_iters=160,
                     )
     agent = PPOAgent(**ppo_kwargs)
     run_polopt_agent(agent=agent, **kwargs)
@@ -19,7 +21,9 @@ def ppo_lagrangian(**kwargs):
                     reward_penalized=False,
                     objective_penalized=True,
                     learn_penalty=True,
-                    penalty_param_loss=True
+                    penalty_param_loss=True,
+                    pi_lr=1e-5,
+                    pi_iters=160,
                     )
     agent = PPOAgent(**ppo_kwargs)
     run_polopt_agent(agent=agent, **kwargs)
