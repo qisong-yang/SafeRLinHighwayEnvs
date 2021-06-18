@@ -18,7 +18,7 @@ if __name__ == '__main__':
         dict(
             env_fn = lambda : gym.make(args.env_name, observation=args.observation),
             ac_kwargs = dict(hidden_sizes=(64,64)),
-            logger_kwargs = {"output_dir": f"./results/ppo_normal_DS_dense_{args.env_name}_PI_{args.penalty_init}_SD_{args.seed}_OB_{args.observation}"},
+            logger_kwargs = {"output_dir": f"./results/ppo_normal_DS_dense_NOut_{args.env_name}_PI_{args.penalty_init}_SD_{args.seed}_OB_{args.observation}"},
             render=False,
             max_ep_len=100,
             epochs=150,
