@@ -234,6 +234,9 @@ def run_polopt_agent(env_fn,
     #=========================================================================#
 
     # Value losses
+    ret_ph_mean = tf.reduce_mean(ret_ph)
+    v_mean = tf.reduce_mean(v)
+
     v_loss = tf.reduce_mean((ret_ph - v)**2)
     vc_loss = tf.reduce_mean((cret_ph - vc)**2)
 
@@ -293,7 +296,9 @@ def run_polopt_agent(env_fn,
         measures = dict(LossPi=pi_loss,
                         SurrCost=surr_cost,
                         LossV=v_loss,
-                        Entropy=ent)
+                        Entropy=ent,
+                        V=v_mean,
+                        Ret_PH=ret_ph_mean)
         if not(agent.reward_penalized):
             measures['LossVC'] = vc_loss
         if agent.use_penalty:
@@ -386,6 +391,8 @@ def run_polopt_agent(env_fn,
             if agent.reward_penalized:
                 r_total = r - cur_penalty * c
                 r_total = r_total / (1 + cur_penalty)
+                #print("r {} c {} total {}".format(r, c, r_total))
+
                 #print("Reward going to save: {}".format(r_total))
                 buf.store(o, a, r_total, v_t, 0, 0, logp_t, pi_info_t)
             else:
@@ -465,11 +472,13 @@ def run_polopt_agent(env_fn,
         # V loss and change
         logger.log_tabular('LossV', average_only=True)
         logger.log_tabular('DeltaLossV', average_only=True)
-
+        logger.log_tabular('V', average_only=True)
+        logger.log_tabular('Ret_PH', average_only=True)
         # Vc loss and change, if applicable (reward_penalized agents don't use vc)
         if not(agent.reward_penalized):
             logger.log_tabular('LossVC', average_only=True)
             logger.log_tabular('DeltaLossVC', average_only=True)
+
 
         if agent.use_penalty or agent.save_penalty:
             logger.log_tabular('Penalty', average_only=True)
