@@ -228,9 +228,9 @@ def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
         pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent = policy_outs
 
     with tf.variable_scope('vf'):
-        v = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, None), axis=1)
+        v = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, tf.tanh), axis=1)
 
     with tf.variable_scope('vc'):
-        vc = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, None), axis=1)
+        vc = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, tf.tanh), axis=1)
 
     return pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent, v, vc
