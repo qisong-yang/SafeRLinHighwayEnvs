@@ -60,5 +60,5 @@ if __name__ == '__main__':
     env, get_action, sess = load_policy(args.fpath,
                                         args.itr if args.itr >=0 else 'last',
                                         args.deterministic)
-    env=gym.make(args.env)
+    #env=gym.make(args.env)
     run_policy(env, get_action, args.len, args.episodes, not(args.norender))
