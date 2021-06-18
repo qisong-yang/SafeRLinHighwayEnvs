@@ -8,7 +8,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', nargs='*', type=int, default=123)
     parser.add_argument('--env_name', type=str, default="mergefast-v0")
-    parser.add_argument('--penalty_init', type=float, default=0.01)
+    parser.add_argument('--penalty_init', type=float, default=100)
     parser.add_argument('--observation', type=str, default="LIST")
 
     args = parser.parse_args()
