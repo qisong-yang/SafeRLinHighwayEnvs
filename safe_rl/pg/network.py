@@ -179,10 +179,12 @@ Actor-Critics
 """
 def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
                      output_activation=None, policy=None, action_space=None):
+
     print("x shape")
     print(x.shape)
     ego_input = x[..., 0,:]
     others_input = x[..., 1:,:]
+    raw_input = tf.reshape(x, [-1, x.shape[1]*x.shape[2]])
 
     ego_process_deepset = create_encoder([16,16,16])
     ego_process_out = create_encoder([16,16,16])
@@ -224,11 +226,11 @@ def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
         policy = mlp_categorical_policy
 
     with tf.variable_scope('pi'):
-        policy_outs = policy(final_features, a, hidden_sizes, activation, output_activation, action_space)
+        policy_outs = policy(raw_input, a, hidden_sizes, activation, output_activation, action_space)
         pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent = policy_outs
 
     with tf.variable_scope('vf'):
-        v = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, tf.tanh), axis=1)
+        v = tf.squeeze(mlp(raw_input, list(hidden_sizes)+[1], activation, tf.tanh), axis=1)
 
     with tf.variable_scope('vc'):
         vc = tf.squeeze(mlp(final_features, list(hidden_sizes)+[1], activation, tf.tanh), axis=1)
