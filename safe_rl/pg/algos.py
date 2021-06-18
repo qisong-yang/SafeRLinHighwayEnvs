@@ -22,7 +22,7 @@ def ppo_lagrangian(**kwargs):
                     objective_penalized=True,
                     learn_penalty=True,
                     penalty_param_loss=True,
-                    pi_lr=1e-5,
+                    pi_lr=5e-5,
                     pi_iters=160,
                     )
     agent = PPOAgent(**ppo_kwargs)

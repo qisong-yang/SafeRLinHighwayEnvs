@@ -1,0 +1,63 @@
+{
+    "ac_kwargs":	{
+        "hidden_sizes":	[
+            64,
+            64
+        ]
+    },
+    "actor_critic":	"mlp_actor_critic",
+    "agent":	{
+        "<safe_rl.pg.agents.PPOAgent object at 0x7f796dd67278>":	{
+            "clip_ratio":	0.2,
+            "kl_margin":	1.2,
+            "params":	{
+                "clipped_adv":	true,
+                "constrained":	false,
+                "first_order":	true,
+                "learn_penalty":	true,
+                "objective_penalized":	true,
+                "penalty_param_loss":	true,
+                "reward_penalized":	false
+            },
+            "pi_iters":	80,
+            "pi_lr":	0.0003
+        }
+    },
+    "cost_gamma":	0.99,
+    "cost_lam":	0.97,
+    "cost_lim":	0.001,
+    "ent_reg":	0.0,
+    "env_fn":	"<function <lambda> at 0x7f796f49a048>",
+    "epochs":	150,
+    "gamma":	0.99,
+    "lam":	0.97,
+    "logger":	{
+        "<safe_rl.utils.logx.EpochLogger object at 0x7f796dd67358>":	{
+            "epoch_dict":	{},
+            "exp_name":	null,
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"./fix_speed_01",
+            "output_file":	{
+                "<_io.TextIOWrapper name='./fix_speed_01/progress.txt' mode='w' encoding='UTF-8'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "logger_kwargs":	{
+        "output_dir":	"./fix_speed_01"
+    },
+    "max_ep_len":	70,
+    "penalty_init":	10,
+    "penalty_iters":	40,
+    "penalty_lr":	0.05,
+    "render":	false,
+    "save_freq":	1,
+    "seed":	0,
+    "steps_per_epoch":	5000,
+    "target_kl":	0.01,
+    "vf_iters":	80,
+    "vf_lr":	0.001
+}

@@ -1,0 +1,63 @@
+{
+    "ac_kwargs":	{
+        "hidden_sizes":	[
+            64,
+            64
+        ]
+    },
+    "actor_critic":	"mlp_actor_critic",
+    "agent":	{
+        "<safe_rl.pg.agents.PPOAgent object at 0x7fc5d4f8f390>":	{
+            "clip_ratio":	0.2,
+            "kl_margin":	1.2,
+            "params":	{
+                "clipped_adv":	true,
+                "constrained":	false,
+                "first_order":	true,
+                "learn_penalty":	false,
+                "objective_penalized":	false,
+                "penalty_param_loss":	false,
+                "reward_penalized":	true
+            },
+            "pi_iters":	80,
+            "pi_lr":	0.0003
+        }
+    },
+    "cost_gamma":	0.99,
+    "cost_lam":	0.97,
+    "cost_lim":	25,
+    "ent_reg":	0.0,
+    "env_fn":	"<function <lambda> at 0x7fc5d66c1048>",
+    "epochs":	150,
+    "gamma":	0.99,
+    "lam":	0.97,
+    "logger":	{
+        "<safe_rl.utils.logx.EpochLogger object at 0x7fc5d4f8f780>":	{
+            "epoch_dict":	{},
+            "exp_name":	null,
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"./normal_ppo_Envmergemix_P100_",
+            "output_file":	{
+                "<_io.TextIOWrapper name='./normal_ppo_Envmergemix_P100_/progress.txt' mode='w' encoding='UTF-8'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "logger_kwargs":	{
+        "output_dir":	"./normal_ppo_Envmergemix_P100_"
+    },
+    "max_ep_len":	70,
+    "penalty_init":	100,
+    "penalty_iters":	1,
+    "penalty_lr":	0.05,
+    "render":	true,
+    "save_freq":	1,
+    "seed":	0,
+    "steps_per_epoch":	5000,
+    "target_kl":	0.01,
+    "vf_iters":	20,
+    "vf_lr":	0.001
+}
