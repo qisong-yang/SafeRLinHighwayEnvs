@@ -157,6 +157,13 @@ def mlp_squashed_gaussian_policy(x, a, hidden_sizes, activation, output_activati
 
     return pi, logp, logp_pi, pi_info, pi_info_phs, d_kl, ent
 
+def create_encoder(layers):
+    mlp_layers = []
+    for l in layers:
+        mlp_layers.append(tf.keras.layers.Dense(l, kernel_initializer='orthogonal'))
+        mlp_layers.append(tf.keras.layers.ReLU())
+
+    return tf.keras.Sequential(mlp_layers, name='Encoder')
 
 def create_mlp(layers, units, name=None):
     mlp_layers = []
@@ -177,10 +184,10 @@ def mlp_actor_critic(x, a, hidden_sizes=(64,64), activation=tf.tanh,
     ego_input = x[..., 0,:]
     others_input = x[..., 1:,:]
 
-    ego_process_deepset = create_mlp(1,32)
-    ego_process_out = create_mlp(1,32)
-    cars_process = create_mlp(1,32)
-    cars_ego_process = create_mlp(1,64)
+    ego_process_deepset = create_encoder([16,16,16])
+    ego_process_out = create_encoder([16,16,16])
+    cars_process = create_encoder([16,16,16])
+    cars_ego_process = create_encoder([64,64,64])
 
 
 
