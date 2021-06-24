@@ -114,3 +114,6 @@ data
 .DS_Store
 
 highway-env
+
+#experiment checkpoints folder
+old_results
