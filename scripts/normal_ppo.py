@@ -20,7 +20,7 @@ if __name__ == '__main__':
             env_fn = lambda : gym.make(args.env_name, observation=args.observation, cooperative_prob=args.coop),
             ac_kwargs = dict(hidden_sizes=(64,64)),
             logger_kwargs = {"output_dir": f"./results/normal_ppo_Env{args.env_name}_coop{args.coop}_penalty_init_{args.penalty_init}_seed_{seed}"},
-            render=True,
+            render=False,
             max_ep_len=100,
             epochs=150,
             steps_per_epoch=5000,
