@@ -25,7 +25,7 @@ if __name__ == '__main__':
             ac_kwargs = dict(hidden_sizes=(64,64)),
             logger_kwargs = {"output_dir": f"./results/normal_ppo/normal_ppo_Env{env_name}_coop{coop}_penalty_init_{args.penalty_init}_seed_{seed}"},
             render=False,
-            max_ep_len=100,
+            max_ep_len=200,
             epochs=150,
             steps_per_epoch=5000,
             penalty_init=args.penalty_init,
