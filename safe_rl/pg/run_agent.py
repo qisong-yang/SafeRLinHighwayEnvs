@@ -83,6 +83,7 @@ def run_polopt_agent(env_fn,
     # Inputs to computation graph for special purposes
     surr_cost_rescale_ph = tf.placeholder(tf.float32, shape=())
     cur_cost_ph = tf.placeholder(tf.float32, shape=())
+    cur_timeout_ph = tf.placeholder(tf.float32, shape=())
 
     # Outputs from actor critic
     ac_outs = actor_critic(x_ph, a_ph, **ac_kwargs)
@@ -149,9 +150,9 @@ def run_polopt_agent(env_fn,
 
     if agent.learn_penalty:
         if agent.penalty_param_loss:
-            penalty_loss = -penalty_param * (cur_cost_ph - cost_lim)
+            penalty_loss = -penalty_param * (cur_cost_ph - cost_lim) if cur_timeout_ph == 0. else penalty_param * cur_timeout_ph
         else:
-            penalty_loss = -penalty * (cur_cost_ph - cost_lim)
+            penalty_loss = -penalty * (cur_cost_ph - cost_lim)  if cur_timeout_ph == 0. else penalty * cur_timeout_ph
         train_penalty = MpiAdamOptimizer(learning_rate=penalty_lr).minimize(penalty_loss)
 
 
@@ -274,6 +275,8 @@ def run_polopt_agent(env_fn,
 
     def update():
         cur_cost = logger.get_stats('EpCost')[0]
+        cur_timeout = logger.get_stats('EpTimeout')[0]
+
         c = cur_cost - cost_lim
         if c > 0 and agent.cares_about_cost:
             logger.log('Warning! Safety constraint is already violated.', 'red')
@@ -307,7 +310,7 @@ def run_polopt_agent(env_fn,
         #=====================================================================#
         if agent.learn_penalty:
             for _ in range(penalty_iters):
-                sess.run(train_penalty, feed_dict={cur_cost_ph: cur_cost})
+                sess.run(train_penalty, feed_dict={cur_cost_ph: cur_cost, cur_timeout_ph: cur_timeout})
 
         #=====================================================================#
         #  Update policy                                                      #
@@ -398,6 +401,9 @@ def run_polopt_agent(env_fn,
             ep_len += 1
 
             terminal = d or (ep_len == max_ep_len)
+            ep_timeout = 0.
+            if ep_len == max_ep_len:
+                ep_timeout = 1.
             if terminal or (t==local_steps_per_epoch-1):
 
                 # If trajectory didn't reach terminal state, bootstrap value target(s)
@@ -415,7 +421,7 @@ def run_polopt_agent(env_fn,
 
                 # Only save EpRet / EpLen if trajectory finished
                 if terminal:
-                    logger.store(EpRet=ep_ret, EpLen=ep_len, EpCost=ep_cost)
+                    logger.store(EpRet=ep_ret, EpLen=ep_len, EpCost=ep_cost, EpTimeout=ep_timeout)
                 else:
                     print('Warning: trajectory cut off by epoch at %d steps.'%ep_len)
 
@@ -446,6 +452,7 @@ def run_polopt_agent(env_fn,
         # Performance stats
         logger.log_tabular('EpRet', with_min_and_max=True)
         logger.log_tabular('EpCost', with_min_and_max=True)
+        logger.log_tabular('EpTimeout', with_min_and_max=True)
         logger.log_tabular('EpLen', average_only=True)
         logger.log_tabular('CumulativeCost', cumulative_cost)
         logger.log_tabular('CostRate', cost_rate)
