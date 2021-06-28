@@ -150,9 +150,9 @@ def run_polopt_agent(env_fn,
 
     if agent.learn_penalty:
         if agent.penalty_param_loss:
-            penalty_loss = -penalty_param * (cur_cost_ph - cost_lim) if cur_timeout_ph == 0. else penalty_param * cur_timeout_ph
+            penalty_loss = -penalty_param * (cur_cost_ph - cost_lim - cur_timeout_ph)
         else:
-            penalty_loss = -penalty * (cur_cost_ph - cost_lim)  if cur_timeout_ph == 0. else penalty * cur_timeout_ph
+            penalty_loss = -penalty * (cur_cost_ph - cost_lim - cur_timeout_ph)
         train_penalty = MpiAdamOptimizer(learning_rate=penalty_lr).minimize(penalty_loss)
 
 
@@ -276,7 +276,7 @@ def run_polopt_agent(env_fn,
     def update():
         cur_cost = logger.get_stats('EpCost')[0]
         cur_timeout = logger.get_stats('EpTimeout')[0]
-
+        print("cur_timeout: {}".format(cur_timeout))
         c = cur_cost - cost_lim
         if c > 0 and agent.cares_about_cost:
             logger.log('Warning! Safety constraint is already violated.', 'red')
